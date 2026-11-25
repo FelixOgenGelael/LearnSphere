@@ -138,7 +138,11 @@ include 'includes/header.php';
                     <span class="badge"><?= htmlspecialchars($hsq['nama_kategori']) ?></span>
                     <span class="badge"><?= htmlspecialchars($hsq['kategori_soal']) ?></span>
                     <p style="margin-top:8px; font-weight:600;"><?= htmlspecialchars($hsq['pertanyaan']) ?></p>
-                    <a href="kerjakan_quiz.php?id=<?= $hsq['quiz_id'] ?>" style="font-size:13.5px;">Ikuti Paket Quiz: <?= htmlspecialchars($hsq['judul_quiz']) ?> &rarr;</a>
+                    <?php if (isset($_SESSION['user_id'])): ?>
+                        <a href="kerjakan_quiz.php?id=<?= $hsq['quiz_id'] ?>" style="font-size:13.5px;">Ikuti Paket Quiz: <?= htmlspecialchars($hsq['judul_quiz']) ?> &rarr;</a>
+                    <?php else: ?>
+                        <a href="login.php?pesan=wajib_login_quiz" style="font-size:13.5px;">Login untuk Ikuti Paket Quiz: <?= htmlspecialchars($hsq['judul_quiz']) ?> &rarr;</a>
+                    <?php endif; ?>
                 </div>
             <?php endforeach; ?>
         </section>

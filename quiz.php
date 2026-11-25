@@ -38,12 +38,24 @@ include 'includes/header.php';
 <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:16px;">
     <div>
         <h1>Quiz Evaluasi Matematika</h1>
-        <p style="color:var(--text-secondary); font-size:14.5px;">Uji kemampuan matematika Anda secara langsung dan lihat skor otomatis.</p>
+        <p style="color:var(--text-secondary); font-size:14.5px;">Uji kemampuan matematika Anda dan raih posisi teratas di papan peringkat.</p>
     </div>
     <?php if (isset($_SESSION['role']) && $_SESSION['role'] === 'pengajar'): ?>
         <a href="quiz_form.php" class="btn btn-primary">+ Tambah Paket Quiz</a>
     <?php endif; ?>
 </div>
+
+<?php if (!isset($_SESSION['user_id'])): ?>
+    <div class="card card-accent" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
+        <p style="font-size:14.5px; color:var(--text-secondary);">
+            Pengerjaan <b>Quiz Evaluasi</b> hanya tersedia bagi pengguna yang sudah login. Tanpa login, Anda tetap dapat berlatih mengerjakan <b>Contoh Soal</b> pada halaman <a href="materi.php"><b>Materi</b></a>.
+        </p>
+        <div style="display:flex; gap:8px;">
+            <a href="login.php" class="btn btn-primary">Login</a>
+            <a href="register.php" class="btn btn-secondary">Daftar Akun</a>
+        </div>
+    </div>
+<?php endif; ?>
 
 <div class="filter-pills">
     <a href="quiz.php" class="pill-link <?= $kategori_aktif === 0 ? 'active' : '' ?>">Semua Kategori</a>
@@ -76,7 +88,11 @@ include 'includes/header.php';
             </div>
             <div style="margin-top:14px; display:flex; gap:8px; flex-wrap:wrap;">
                 <?php if ($qz['total_soal'] > 0): ?>
-                    <a href="kerjakan_quiz.php?id=<?= $qz['id'] ?>" class="btn btn-success">Mulai Quiz</a>
+                    <?php if (isset($_SESSION['user_id'])): ?>
+                        <a href="kerjakan_quiz.php?id=<?= $qz['id'] ?>" class="btn btn-success">Mulai Quiz</a>
+                    <?php else: ?>
+                        <a href="login.php?pesan=wajib_login_quiz" class="btn btn-secondary">Login untuk Kerjakan Quiz</a>
+                    <?php endif; ?>
                 <?php else: ?>
                     <span class="badge">Soal Belum Tersedia</span>
                 <?php endif; ?>

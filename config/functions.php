@@ -1,4 +1,12 @@
 <?php
+// Proteksi halaman wajib login (misal: pengerjaan Quiz)
+function wajibLogin($pesan = 'wajib_login') {
+    if (!isset($_SESSION['user_id'])) {
+        header("Location: login.php?pesan=" . urlencode($pesan));
+        exit;
+    }
+}
+
 // Proteksi khusus halaman manajemen milik Pengajar
 function wajibPengajar() {
     if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'pengajar') {

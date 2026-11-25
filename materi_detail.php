@@ -77,7 +77,11 @@ include 'includes/header.php';
             <?php while ($qz = mysqli_fetch_assoc($quiz_list)): ?>
                 <li style="margin-bottom: 8px;">
                     <b><?= htmlspecialchars($qz['judul_quiz']) ?></b> (Durasi: <?= $qz['durasi_menit'] ?> menit) — 
-                    <a href="kerjakan_quiz.php?id=<?= $qz['id'] ?>"><b>Kerjakan Quiz &rarr;</b></a>
+                    <?php if (isset($_SESSION['user_id'])): ?>
+                        <a href="kerjakan_quiz.php?id=<?= $qz['id'] ?>"><b>Kerjakan Quiz &rarr;</b></a>
+                    <?php else: ?>
+                        <a href="login.php?pesan=wajib_login_quiz"><b>Login untuk Kerjakan Quiz &rarr;</b></a>
+                    <?php endif; ?>
                 </li>
             <?php endwhile; ?>
         </ul>
