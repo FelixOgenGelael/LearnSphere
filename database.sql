@@ -2,25 +2,27 @@ DROP DATABASE IF EXISTS db_learnsphere;
 CREATE DATABASE db_learnsphere CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
 USE db_learnsphere;
 
--- 1. Tabel Users (Untuk Pengajar & Siswa Terdaftar)
+-- 1. Tabel Users (Mendukung Role: user, pengajar, admin + Persetujuan Pengajar)
 CREATE TABLE users (
     id INT(11) AUTO_INCREMENT PRIMARY KEY,
     nama_lengkap VARCHAR(100) NOT NULL,
     username VARCHAR(50) NOT NULL UNIQUE,
     email VARCHAR(100) NOT NULL UNIQUE,
     password VARCHAR(255) NOT NULL,
-    role ENUM('pengajar', 'siswa') NOT NULL DEFAULT 'siswa',
+    role ENUM('user', 'pengajar', 'admin') NOT NULL DEFAULT 'user',
+    status_pengajar ENUM('none', 'pending', 'approved', 'rejected') NOT NULL DEFAULT 'none',
+    bidang_keahlian VARCHAR(200) DEFAULT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- 2. Tabel Kategori Matematika (Kategorisasi Materi & Quiz)
+-- 2. Tabel Kategori Matematika
 CREATE TABLE kategori (
     id INT(11) AUTO_INCREMENT PRIMARY KEY,
     nama_kategori VARCHAR(80) NOT NULL UNIQUE,
     deskripsi VARCHAR(255) NOT NULL
 );
 
--- 3. Tabel Materi (Topik Utama Matematika)
+-- 3. Tabel Materi
 CREATE TABLE materi (
     id INT(11) AUTO_INCREMENT PRIMARY KEY,
     kategori_id INT(11) NOT NULL,
@@ -34,7 +36,7 @@ CREATE TABLE materi (
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
--- 4. Tabel Modul Materi (Sub-Bab + Foto & Video Opsional)
+-- 4. Tabel Modul Materi
 CREATE TABLE modul_materi (
     id INT(11) AUTO_INCREMENT PRIMARY KEY,
     materi_id INT(11) NOT NULL,
@@ -48,7 +50,7 @@ CREATE TABLE modul_materi (
     FOREIGN KEY (materi_id) REFERENCES materi(id) ON DELETE CASCADE
 );
 
--- 5. Tabel Contoh Soal pada Modul Materi (Terkategori & Interaktif)
+-- 5. Tabel Contoh Soal pada Modul Materi
 CREATE TABLE contoh_soal (
     id INT(11) AUTO_INCREMENT PRIMARY KEY,
     modul_id INT(11) NOT NULL,
@@ -78,7 +80,7 @@ CREATE TABLE quiz (
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
--- 7. Tabel Soal Quiz Pilihan Ganda (Terkategori)
+-- 7. Tabel Soal Quiz Pilihan Ganda
 CREATE TABLE soal_quiz (
     id INT(11) AUTO_INCREMENT PRIMARY KEY,
     quiz_id INT(11) NOT NULL,
@@ -92,7 +94,7 @@ CREATE TABLE soal_quiz (
     FOREIGN KEY (quiz_id) REFERENCES quiz(id) ON DELETE CASCADE
 );
 
--- 8. Tabel Hasil Quiz (Mendukung User Terdaftar & Pengunjung Publik)
+-- 8. Tabel Hasil Quiz
 CREATE TABLE hasil_quiz (
     id INT(11) AUTO_INCREMENT PRIMARY KEY,
     quiz_id INT(11) NOT NULL,
@@ -107,7 +109,7 @@ CREATE TABLE hasil_quiz (
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE SET NULL
 );
 
--- 9. Tabel Diskusi Modul (Mendukung Publik & Member)
+-- 9. Tabel Diskusi Modul
 CREATE TABLE diskusi (
     id INT(11) AUTO_INCREMENT PRIMARY KEY,
     modul_id INT(11) NOT NULL,
@@ -120,12 +122,13 @@ CREATE TABLE diskusi (
 );
 
 -- ==========================================================
--- DATA AWAL (SEED DATA) BERTEMA MATEMATIKA
--- Password akun demo: 123456
+-- DATA AWAL (SEED DATA) - PASSWORD SEMUA AKUN DEMO: 123456
 -- ==========================================================
-INSERT INTO users (nama_lengkap, username, email, password, role) VALUES
-('Dr. Hendra Wijaya, M.Si.', 'pengajar1', 'hendra@learnsphere.edu', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'pengajar'),
-('Nadia Putri', 'siswa1', 'nadia@learnsphere.edu', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'siswa');
+INSERT INTO `users` (`id`, `nama_lengkap`, `username`, `email`, `password`, `role`, `status_pengajar`, `bidang_keahlian`, `created_at`) VALUES
+(1, 'Administrator Sistem', 'admin1', 'admin@learnsphere.edu', '$2y$10$pYIVe5VcglYMGLxQmpWIBOwMY1mmvBv7Y0iCUYI2Cb8ZnLcqIxxjm', 'admin', 'approved', 'Manajemen Platform & Verifikasi', '2026-11-25 22:03:24'),
+(2, 'Dr. Hendra Wijaya, M.Si.', 'pengajar1', 'hendra@learnsphere.edu', '$2y$10$pYIVe5VcglYMGLxQmpWIBOwMY1mmvBv7Y0iCUYI2Cb8ZnLcqIxxjm', 'pengajar', 'approved', 'Dosen Matematika — Aljabar & Kalkulus', '2026-11-25 22:03:24'),
+(3, 'Nadia Putri', 'user1', 'nadia@learnsphere.edu', '$2y$10$pYIVe5VcglYMGLxQmpWIBOwMY1mmvBv7Y0iCUYI2Cb8ZnLcqIxxjm', 'user', 'none', NULL, '2026-11-25 22:03:24'),
+(4, 'Raka Pratama, S.Pd.', 'user2', 'raka@learnsphere.edu', '$2y$10$pYIVe5VcglYMGLxQmpWIBOwMY1mmvBv7Y0iCUYI2Cb8ZnLcqIxxjm', 'user', 'pending', 'Guru Matematika SMA — Trigonometri & Statistika', '2026-11-25 22:03:24');
 
 INSERT INTO kategori (nama_kategori, deskripsi) VALUES
 ('Aljabar', 'Persamaan linear, pertidaksamaan, fungsi kuadrat, matriks, dan sistem persamaan.'),
@@ -134,10 +137,10 @@ INSERT INTO kategori (nama_kategori, deskripsi) VALUES
 ('Statistika & Peluang', 'Ukuran pemusatan data, penyebaran data, kaidah pencacahan, dan probabilitas.');
 
 INSERT INTO materi (kategori_id, user_id, judul, tingkat, deskripsi) VALUES
-(1, 1, 'Sistem Persamaan Linear & Fungsi Kuadrat', 'Dasar', 'Mempelajari penyelesaian sistem persamaan linear dua variabel (SPLDV) menggunakan metode substitusi dan eliminasi, serta analisis grafik fungsi kuadrat.'),
-(2, 1, 'Limit Fungsi Aljabar & Turunan Pertama', 'Menengah', 'Memahami konsep pendekatan nilai limit fungsi aljabar, sifat-sifat limit, hingga aturan dasar turunan fungsi polinomial untuk menentukan gradien garis singgung.'),
-(3, 1, 'Perbandingan Trigonometri pada Segitiga Siku-Siku', 'Dasar', 'Mengenal rasio sinus, kosinus, dan tangen beserta nilai sudut istimewa untuk menyelesaikan masalah pengukuran jarak dan ketinggian.'),
-(4, 1, 'Ukuran Pemusatan Data & Peluang Kejadian', 'Dasar', 'Menghitung rata-rata (mean), median, modus data tunggal maupun berkelompok, serta peluang empirik dan teoretik.');
+(1, 2, 'Sistem Persamaan Linear & Fungsi Kuadrat', 'Dasar', 'Mempelajari penyelesaian sistem persamaan linear dua variabel (SPLDV) menggunakan metode substitusi dan eliminasi, serta analisis grafik fungsi kuadrat.'),
+(2, 2, 'Limit Fungsi Aljabar & Turunan Pertama', 'Menengah', 'Memahami konsep pendekatan nilai limit fungsi aljabar, sifat-sifat limit, hingga aturan dasar turunan fungsi polinomial untuk menentukan gradien garis singgung.'),
+(3, 2, 'Perbandingan Trigonometri pada Segitiga Siku-Siku', 'Dasar', 'Mengenal rasio sinus, kosinus, dan tangen beserta nilai sudut istimewa untuk menyelesaikan masalah pengukuran jarak dan ketinggian.'),
+(4, 2, 'Ukuran Pemusatan Data & Peluang Kejadian', 'Dasar', 'Menghitung rata-rata (mean), median, modus data tunggal maupun berkelompok, serta peluang empirik dan teoretik.');
 
 INSERT INTO modul_materi (materi_id, urutan, judul_modul, konten, video_url) VALUES
 (1, 1, 'Metode Eliminasi dan Substitusi pada SPLDV', 'Sistem Persamaan Linear Dua Variabel (SPLDV) memiliki bentuk umum ax + by = c dan dx + ey = f. Untuk menemukan himpunan penyelesaian (x, y), kita dapat menggunakan:\n\n1. Metode Eliminasi: Menyamakan koefisien salah satu variabel lalu menjumlahkan atau mengurangkan kedua persamaan.\n2. Metode Substitusi: Menyatakan satu variabel dalam variabel lainnya, lalu menggantikannya ke persamaan kedua.\n3. Metode Gabungan: Mengeliminasi satu variabel terlebih dahulu untuk memperoleh nilai variabel pertama, lalu mensubstitusikannya untuk mendapatkan variabel kedua.', 'https://www.youtube.com/embed/nok99JOhcjo'),
@@ -153,8 +156,8 @@ INSERT INTO contoh_soal (modul_id, kategori_soal, pertanyaan, pilihan_a, pilihan
 (4, 'Hitungan', 'Nilai dari sin 30° + cos 60° adalah...', '0', '0,5', '1', '1,5', 'C', 'Berdasarkan tabel sudut istimewa trigonometri, sin 30° = 1/2 dan cos 60° = 1/2. Jadi 1/2 + 1/2 = 1.');
 
 INSERT INTO quiz (kategori_id, materi_id, user_id, judul_quiz, deskripsi, durasi_menit) VALUES
-(1, 1, 1, 'Quiz Aljabar: SPLDV & Fungsi Kuadrat', 'Evaluasi pemahaman konsep dan hitungan mengenai sistem persamaan linear dua variabel serta sifat grafik fungsi kuadrat.', 10),
-(2, 2, 1, 'Quiz Kalkulus: Turunan Fungsi Polinomial', 'Uji kecepatan dan ketepatan Anda dalam menentukan turunan pertama fungsi aljabar.', 8);
+(1, 1, 2, 'Quiz Aljabar: SPLDV & Fungsi Kuadrat', 'Evaluasi pemahaman konsep dan hitungan mengenai sistem persamaan linear dua variabel serta sifat grafik fungsi kuadrat.', 10),
+(2, 2, 2, 'Quiz Kalkulus: Turunan Fungsi Polinomial', 'Uji kecepatan dan ketepatan Anda dalam menentukan turunan pertama fungsi aljabar.', 8);
 
 INSERT INTO soal_quiz (quiz_id, kategori_soal, pertanyaan, opsi_a, opsi_b, opsi_c, opsi_d, kunci_jawaban) VALUES
 (1, 'Hitungan', 'Himpunan penyelesaian dari 3x + 2y = 12 dan x + 2y = 8 adalah...', '(2, 3)', '(3, 2)', '(4, 0)', '(1, 4)', 'A'),
@@ -164,5 +167,7 @@ INSERT INTO soal_quiz (quiz_id, kategori_soal, pertanyaan, opsi_a, opsi_b, opsi_
 (2, 'Konsep Dasar', 'Turunan pertama dari fungsi konstan f(x) = 2026 adalah...', '2026', '1', '0', '2026x', 'C');
 
 INSERT INTO hasil_quiz (quiz_id, user_id, nama_peserta, jumlah_benar, total_soal, skor, grade) VALUES
-(1, 2, 'Nadia Putri', 3, 3, 100.00, 'A'),
-(1, NULL, 'Raka Pratama (Tamu)', 2, 3, 66.67, 'B');
+(1, 3, 'Nadia Putri', 3, 3, 100.00, 'A'),
+(2, 3, 'Nadia Putri', 1, 2, 50.00, 'C'),
+(1, 4, 'Raka Pratama, S.Pd.', 2, 3, 66.67, 'B'),
+(2, 4, 'Raka Pratama, S.Pd.', 2, 2, 100.00, 'A');

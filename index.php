@@ -32,6 +32,30 @@ include 'includes/header.php';
     </form>
 </section>
 
+<?php if (isset($_SESSION['role']) && $_SESSION['role'] === 'user'): ?>
+    <?php if (($_SESSION['status_pengajar'] ?? '') === 'pending'): ?>
+        <div class="card" style="border-left: 4px solid var(--warning-border); background: var(--warning-bg);">
+            <b>Permohonan Pengajar Sedang Ditinjau:</b> Akun Anda saat ini berstatus <b>User</b> sambil menunggu persetujuan <b>Admin</b> untuk mendapatkan hak akses <b>Pengajar</b>.
+        </div>
+    <?php else: ?>
+        <div class="card" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
+            <div>
+                <b>Ingin berkontribusi membuat materi dan soal matematika?</b>
+                <p style="font-size:14px; color:var(--text-secondary);">Ajukan peningkatan akun Anda dari <b>User</b> menjadi <b>Pengajar</b> (memerlukan verifikasi Admin).</p>
+            </div>
+            <a href="ajukan_pengajar.php" class="btn btn-secondary">Ajukan Sebagai Pengajar</a>
+        </div>
+    <?php endif; ?>
+<?php elseif (isset($_SESSION['role']) && $_SESSION['role'] === 'admin' && $jumlah_pending_admin > 0): ?>
+    <div class="card" style="border-left: 4px solid var(--accent); display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
+        <div>
+            <b>Terdapat <?= $jumlah_pending_admin ?> Permohonan Pengajar Baru!</b>
+            <p style="font-size:14px; color:var(--text-secondary);">Tinjau dan setujui permohonan agar calon pengajar dapat mulai menyusun materi.</p>
+        </div>
+        <a href="admin_users.php" class="btn btn-primary">Buka Panel Admin</a>
+    </div>
+<?php endif; ?>
+
 <!-- STATISTIK PLATFORM -->
 <section class="grid-4" style="margin-bottom: 24px;">
     <div class="stat-box">

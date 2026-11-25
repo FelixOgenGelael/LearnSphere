@@ -1,5 +1,27 @@
 <?php
-// Proteksi halaman wajib login (misal: pengerjaan Quiz)
+// Sinkronisasi role & status pengajar dari database secara real-time
+function syncSessionUser($conn) {
+    if (isset($_SESSION['user_id'])) {
+        $uid = (int)$_SESSION['user_id'];
+        $res = mysqli_query($conn, "SELECT nama_lengkap, role, status_pengajar FROM users WHERE id = $uid");
+        if ($row = mysqli_fetch_assoc($res)) {
+            $_SESSION['nama_lengkap']    = $row['nama_lengkap'];
+            $_SESSION['role']            = $row['role'];
+            $_SESSION['status_pengajar'] = $row['status_pengajar'];
+        } else {
+            session_destroy();
+            header("Location: login.php");
+            exit;
+        }
+    }
+}
+
+// Mengecek apakah user memiliki hak kelola konten (Pengajar terverifikasi atau Admin)
+function isPengajarOrAdmin() {
+    return isset($_SESSION['role']) && in_array($_SESSION['role'], ['pengajar', 'admin']);
+}
+
+// Proteksi halaman wajib login (misal: pengerjaan Quiz & pengajuan Pengajar)
 function wajibLogin($pesan = 'wajib_login') {
     if (!isset($_SESSION['user_id'])) {
         header("Location: login.php?pesan=" . urlencode($pesan));
@@ -7,15 +29,23 @@ function wajibLogin($pesan = 'wajib_login') {
     }
 }
 
-// Proteksi khusus halaman manajemen milik Pengajar
+// Proteksi khusus halaman manajemen materi & quiz (Pengajar disetujui atau Admin)
 function wajibPengajar() {
-    if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'pengajar') {
+    if (!isPengajarOrAdmin()) {
         header("Location: login.php?pesan=khusus_pengajar");
         exit;
     }
 }
 
-// Konversi skor ke huruf mutu (Modul 4 & 5)
+// Proteksi khusus halaman Panel Admin
+function wajibAdmin() {
+    if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
+        header("Location: login.php?pesan=khusus_admin");
+        exit;
+    }
+}
+
+// Konversi skor ke huruf mutu
 function hitungGrade($skor) {
     if ($skor >= 81) return 'A';
     if ($skor >= 61) return 'B';
