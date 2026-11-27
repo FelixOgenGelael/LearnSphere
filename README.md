@@ -121,6 +121,6 @@ Aplikasi ini mengimplementasikan **11 modul utama** yang saling terintegrasi unt
 ## 8. Tautan Publikasi & Dokumentasi Proyek
 
 * **Video Presentasi Proyek (YouTube):** `https://youtu.be/KVP2_GniSgM`
-* **Project Showcase (Anggota 1):** `https://www.instagram.com/p/DgPqCuxGF7O/?knvt=MXFxaTUyNnhjcjJ4dg==`
-* **Project Showcase (Anggota 2):** `https://www.instagram.com/p/DgPqCuxGF7O/?evlk=endiMDVsMTB1aHNo`
-* **Project Showcase (Anggota 3):** `https://www.instagram.com/p/DgPqCuxGF7O/?jplx=cmFjazcwNTY0NnA0`
+* **Project Showcase (Anggota 1):** `https://www.instagram.com/p/DgPtueNmNNw/?knvt=NmJhbDV0OWxxOW1o`
+* **Project Showcase (Anggota 2):** `https://www.instagram.com/p/DgPtueNmNNw/?jplx=MTBtcXFtYzdzd3U2ag==`
+* **Project Showcase (Anggota 3):** `https://www.instagram.com/p/DgPtueNmNNw/?lqvp=OHpuMnRqN3QzcnB2`
