@@ -1,4 +1,4 @@
-# LearnSphere — Portal Belajar & Quiz Matematika Terbuka
+# LearnSphere - Portal Belajar & Quiz Matematika Terbuka
 
 **Proyek Akhir Responsi 2 — Praktikum Pemrograman Web I**  
 Jurusan Informatika, Fakultas Teknik, Universitas Jenderal Soedirman (2026)
